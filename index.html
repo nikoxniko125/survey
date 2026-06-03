@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飲食喜好調查 - Staff Club</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* 1. 全域深色底色與字體設定 */
+        :root {
+            --main-bg: #0f172a;       /* 網站主底色：極深藍黑 */
+            --card-bg: #1a1625;       /* 中央卡紙底色：深啡黑 */
+            --card-border: #312e81;   /* 卡紙微光邊框 */
+            --text-primary: #f8fafc;  /* 主文字顏色 */
+            --text-muted: #94a3b8;    /* 輔助文字顏色 */
+            --accent-color: #38bdf8;  /* 點綴色 */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: all 0.25s ease;
+        }
+
+        body {
+            background-color: var(--main-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', 'Noto Sans HK', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 2. 中央卡紙佈局 (跨平台完美適配) */
+        .survey-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 680px;
+            min-height: 480px;
+            padding: 50px 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: none; /* 預設全部隱藏，由 JS 控制顯示 */
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* 顯示目前活動的卡片 */
+        .survey-card.active {
+            display: flex;
+        }
+
+        /* RWD 響應式調整 */
+        @media (max-width: 768px) {
+            .survey-card { padding: 40px 30px; min-height: 420px; }
+        }
+        @media (max-width: 480px) {
+            .survey-card { padding: 30px 20px; min-height: 380px; border-radius: 16px; }
+        }
+
+        /* 3. 卡紙內部內容通用樣式 */
+        .card-header h1 {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 35px;
+            text-align: center; /* 標題固定在正上方 */
+            background: linear-gradient(to right, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @media (max-width: 480px) {
+            .card-header h1 { font-size: 26px; margin-bottom: 25px; }
+        }
+
+        /* 內容靠左置中顯示 */
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* 靠左 */
+            justify-content: center; /* 置中 */
+            flex-grow: 1;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        /* 4. 各頁面組件樣式 */
+        .input-group {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .input-group label, .section-subtitle {
+            display: block;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .input-field {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 18px;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent-color);
+            background-color: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+        }
+
+        /* 5. 質感按鈕與選項式按鈕（Radio & Checkbox 箱子樣式） */
+        .choice-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* 控制選項與選項之間的行距 */
+        }
+
+        .clickable-option {
+            width: 100%;
+            max-width: 500px;
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 2px solid #334155;
+            border-radius: 14px;
+            padding: 18px 24px;
+            font-size: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .clickable-option:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: #475569;
+        }
+
+        .clickable-option input {
+            width: 22px;
+            height: 22px;
+            margin-right: 18px;
+            accent-color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        /* 當選中時的微光高亮效果 */
+        .clickable-option:has(input:checked) {
+            border-color: var(--accent-color);
+            background-color: rgba(56, 189, 248, 0.05);
+        }
+
+        /* 雙欄並排（用於第四頁種類和甜度） */
+        .grid-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+        }
+        @media (max-width: 600px) {
+            .grid-two-col { grid-template-columns: 1fr; }
+        }
+
+        /* 底部導航按鈕 */
+        .btn-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+
+        .btn-next {
+            background-color: #ffffff;
+            color: #0f172a;
+            border: none;
+            margin-left: auto; /* 若無返回鍵自動推至最右 */
+        }
+
+        .btn-next:hover { background-color: #e2e8f0; transform: translateY(-1px); }
+
+        .btn-back {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid #334155;
+        }
+
+        .btn-back:hover { color: var(--text-primary); border-color: #64748b; }
+
+        /* 6. 固定於畫面角落的元素 (所有頁面保留) */
+        .fixed-footer-left {
+            position: fixed;
+            bottom: 24px;
+            left: 32px;
+            z-index: 10;
+        }
+
+        .lang-toggle-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #334155;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .lang-toggle-btn:hover {
+            color: var(--text-primary);
+            border-color: #64748b;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .fixed-footer-right {
+            position: fixed;
+            bottom: 24px;
+            right: 32px;
+            z-index: 10;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            pointer-events: none;
+            text-align: right;
+        }
+
+        @media (max-width: 480px) {
+            .fixed-footer-left { bottom: 16px; left: 16px; }
+            .fixed-footer-right { bottom: 18px; right: 16px; font-size: 11px; }
+            .lang-toggle-btn { padding: 6px 12px; font-size: 12px; }
+        }
+
+        /* 感謝頁面特殊樣式 */
+        .success-animation {
+            text-align: center;
+            width: 100%;
+        }
+        .success-icon {
+            font-size: 64px;
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="fixed-footer-left">
+        <button class="lang-toggle-btn" id="langBtn" onclick="toggleLanguage()">中 / ENG</button>
+    </div>
+
+    <div class="fixed-footer-right">
+        Your Staff Club team cares about YOU❤️
+    </div>
+
+    <div class="survey-card active" id="page-1">
+        <div class="card-header">
+            <h1 data-cn="飲食喜好調查" data-en="Dietary Preferences Survey">飲食喜好調查</h1>
+        </div>
+        <div class="card-body">
+            <div class="input-group">
+                <label id="labelName" data-cn="你的名字" data-en="Your Name">你的名字</label>
+                <input type="text" id="username" class="input-field" placeholder="e.g. Tom">
+            </div>
+        </div>
+        <div class="btn-container">
+            <button class="nav-btn btn-next" onclick="goToPage(2)" data-cn="下一頁" data-en="Next">下一頁</button>
+        </div>
+    </div>
+
+    <div class="survey-card" id="page-2">
+        <div class="card-header">
+            <h1 data-cn="飲食類型偏好" data-en="Dietary Type Preferences">飲食類型偏好</h1>
+        </div>
+        <div class="card-body">
+            <div class="choice-list">
+                <label class="clickable-option">
+                    <input type="radio" name="dietType" value="meat" checked>
+                    <span data-cn="肉食類 🍖" data-en="Meat Lover 🍖">肉食類 🍖</span>
+                </label>
+                <label class="clickable-option">
+                    <input type="radio" name="dietType" value="veggie">
+                    <span data-cn="素食類 🥗" data-en="Vegetarian 🥗">素食類 🥗</span>
+                </label>
+            </div>
+        </div>
+        <div class="btn-container">
+            <button class="nav-btn btn-back" onclick="goToPage(1)" data-cn="返回" data-en="Back">返回</button>
+            <button class="nav-btn btn-next" onclick="handleDietRouting()" data-cn="下一頁" data-en="Next">下一頁</button>
+        </div>
+    </div>
+
+    <div class="survey-card" id="page-3">
+        <div class="card-header">
+            <h1 data-cn="食物喜好" data-en="Food Preferences">食物喜好</h1>
+        </div>
+        <div class="card-body">
+            <div style="width: 100%;">
+                <span class="section-subtitle" data-cn="你平日喜歡食哪種肉類？(可多選)" data-en="Which meats do you prefer? (Multiple)">你平日喜歡食哪種肉類？(可多選)</span>
+                <div class="choice-list" style="margin-top: 15px;">
+                    <label class="clickable-option">
+                        <input type="checkbox" name="foodChoice" value="豬">
+                        <span data-cn="豬肉🐷" data-en="Pork🐷">豬肉🐷</span>
+                    </label>
+                    <label class="clickable-option">
+                        <input type="checkbox" name="foodChoice" value="牛">
+                        <span data-cn="牛肉🐮" data-en="Beef🐮">牛肉🐮</span>
+                    </label>
+                    <label class="clickable-option">
+                        <input type="checkbox" name="foodChoice" value="雞">
+                        <span data-cn="雞肉🐔" data-en="Chicken🐔">雞肉🐔</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="btn-container">
+            <button class="nav-btn btn-back" onclick="goToPage(2)" data-cn="返回" data-en="Back">返回</button>
+            <button class="nav-btn btn-next" onclick="goToPage(4)" data-cn="下一頁" data-en="Next">下一頁</button>
+        </div>
+    </div>
+
+    <div class="survey-card" id="page-4">
+        <div class="card-header">
+            <h1 data-cn="飲品喜好" data-en="Drink Preferences">飲品喜好</h1>
+        </div>
+        <div class="card-body" style="gap: 35px;">
+            <div style="width: 100%;">
+                <span class="section-subtitle" 
+                      data-cn="請依喜好順序點擊飲品種類 (多選排序)" 
+                      data-en="Please click drinks in order of preference (Ranking)">
+                      請依喜好順序點擊飲品種類 (多選排序)
+                </span>
+                <div class="choice-list" style="margin-top: 15px; gap: 12px;">
+                    <div class="clickable-option drink-rank-option" data-drink="珍珠奶茶" onclick="handleDrinkRanking(this)">
+                        <div class="rank-badge" style="width: 28px; height: 28px; border: 2px solid #475569; border-radius: 50%; margin-right: 18px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: var(--accent-color);"></div>
+                        <span data-cn="珍珠奶茶" data-en="Bubble Milk Tea">珍珠奶茶</span>&nbsp;🧋
+                    </div>
+                    <div class="clickable-option drink-rank-option" data-drink="水果茶" onclick="handleDrinkRanking(this)">
+                        <div class="rank-badge" style="width: 28px; height: 28px; border: 2px solid #475569; border-radius: 50%; margin-right: 18px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: var(--accent-color);"></div>
+                        <span data-cn="水果茶" data-en="Fruit Tea">水果茶</span>&nbsp;🥥
+                    </div>
+                    <div class="clickable-option drink-rank-option" data-drink="純茶" onclick="handleDrinkRanking(this)">
+                        <div class="rank-badge" style="width: 28px; height: 28px; border: 2px solid #475569; border-radius: 50%; margin-right: 18px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: var(--accent-color);"></div>
+                        <span data-cn="純茶" data-en="Pure Tea">純茶</span>&nbsp;🍵
+                    </div>
+                </div>
+            </div>
+            
+            <div style="width: 100%;">
+                <span class="section-subtitle" data-cn="甜度選擇 (單選)" data-en="Sweetness Level (Single Choice)">甜度選擇 (單選)</span>
+                <div class="choice-list" style="margin-top: 15px; gap: 12px;">
+                    <label class="clickable-option" style="padding: 14px 20px; font-size: 18px;">
+                        <input type="radio" name="sweetness" value="正常糖" checked>
+                        <span data-cn="正常糖 Regular" data-en="Regular">正常糖 Regular</span>
+                    </label>
+                    <label class="clickable-option" style="padding: 14px 20px; font-size: 18px;">
+                        <input type="radio" name="sweetness" value="半糖">
+                        <span data-cn="半糖 Half Sugar" data-en="Half Sugar">半糖 Half Sugar</span>
+                    </label>
+                    <label class="clickable-option" style="padding: 14px 20px; font-size: 18px;">
+                        <input type="radio" name="sweetness" value="三分糖">
+                        <span data-cn="三分糖 30% Sugar" data-en="30% Sugar">三分糖 30% Sugar</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="btn-container">
+            <button class="nav-btn btn-back" id="backFromDrinksBtn" onclick="handleDrinksBack()" data-cn="返回" data-en="Back">返回</button>
+            <button class="nav-btn btn-next" id="submitBtn" onclick="submitSurvey()" data-cn="提交投票" data-en="Submit">提交投票</button>
+        </div>
+    </div>
+
+    <div class="survey-card" id="page-5">
+        <div class="card-body" style="align-items: center; justify-content: center; text-align: center;">
+            <div class="success-animation">
+                <div class="success-icon" style="font-size: 80px; margin-bottom: 25px;">❤️</div>
+                <h1 style="font-size: 42px; font-weight: 700; margin-bottom: 20px; line-height: 1.4; background: linear-gradient(to right, #ffffff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" 
+                    data-cn="感謝抽空填寫問卷" 
+                    data-en="Thank you for taking the time to complete the survey">
+                    感謝抽空填寫問卷
+                </h1>
+                <p style="color: var(--text-muted); font-size: 18px; margin-bottom: 10px;" data-cn="後台已成功記錄好你的所有喜好。" data-en="Your preferences have been successfully recorded.">後台已成功記錄好你的所有喜好。</p>
+            </div>
+        </div>
+        <div class="btn-container" style="justify-content: center;">
+            <button class="nav-btn btn-next" style="margin-left: 0; padding: 14px 50px; font-size: 18px;" onclick="closeWindow()" data-cn="完成" data-en="Finish">完成</button>
+        </div>
+    </div>
+
+    <script>
+        // 請在此處替換成你部署好的 Google Apps Script 網址
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbx_eYmXG3eN8IAnH-U5bT1fPqorFm71_Z7j2T0v/exec'; 
+        
+        let currentLang = 'cn';
+        let selectedDrinkRank = []; // 用來按順序儲存同事點擊的飲品種類
+
+        // 核心翻頁與「各頁強制定填/選驗證」函數
+        function goToPage(pageNum) {
+            // 【驗證 1】第一頁 ➔ 第二頁：必須填寫名字
+            if (pageNum === 2) {
+                const usernameInput = document.getElementById('username').value.trim();
+                if (usernameInput === '') {
+                    alert(currentLang === 'cn' ? '請先輸入你的名字喔！🍙' : 'Please enter your name first! 🍙');
+                    return;
+                }
+            }
+
+            // 【驗證 2】第三頁 ➔ 第四頁：如果是肉食類，必須至少勾選一個肉類
+            if (pageNum === 4) {
+                const selectedDiet = document.querySelector('input[name="dietType"]:checked').value;
+                if (selectedDiet === 'meat') {
+                    const checkedMeats = document.querySelectorAll('input[name="foodChoice"]:checked');
+                    if (checkedMeats.length === 0) {
+                        alert(currentLang === 'cn' ? '你選擇了肉食類，請至少勾選一種你想食的肉類喔！🍖' : 'Please select at least one type of meat! 🍖');
+                        return;
+                    }
+                }
+            }
+            
+            // 驗證通過，執行翻頁切換
+            document.querySelectorAll('.survey-card').forEach(card => card.classList.remove('active'));
+            document.getElementById(`page-${pageNum}`).classList.add('active');
+        }
+
+        // 第二頁的「下一頁」分流路由
+        function handleDietRouting() {
+            // 第二頁為 Radio Button 單選，預設已勾選「肉食類」，無需進行漏填驗證
+            const selectedDiet = document.querySelector('input[name="dietType"]:checked').value;
+            if (selectedDiet === 'meat') {
+                goToPage(3); // 去肉類多選頁
+            } else {
+                goToPage(4); // 直接跳去飲品頁
+            }
+        }
+
+        // 第四頁的「返回」路由邏輯
+        function handleDrinksBack() {
+            const selectedDiet = document.querySelector('input[name="dietType"]:checked').value;
+            if (selectedDiet === 'meat') {
+                goToPage(3);
+            } else {
+                goToPage(2);
+            }
+        }
+
+        // 核心功能：動態處理第四頁飲品多選與「排名前後數字」顯示邏輯
+        function handleDrinkRanking(element) {
+            const drinkName = element.getAttribute('data-drink');
+            const index = selectedDrinkRank.indexOf(drinkName);
+
+            if (index === -1) {
+                // 如果陣列未有，放入排序尾部
+                selectedDrinkRank.push(drinkName);
+                element.style.borderColor = 'var(--accent-color)';
+                element.style.backgroundColor = 'rgba(56, 189, 248, 0.05)';
+            } else {
+                // 如果已有，代表再次點擊，將其移出陣列
+                selectedDrinkRank.splice(index, 1);
+                element.style.borderColor = '#334155';
+                element.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
+            }
+
+            // 重新刷新目前所有選項圓圈的數字顯示狀態
+            document.querySelectorAll('.drink-rank-option').forEach(opt => {
+                const name = opt.getAttribute('data-drink');
+                const rank = selectedDrinkRank.indexOf(name);
+                const badge = opt.querySelector('.rank-badge');
+                
+                if (rank !== -1) {
+                    badge.innerText = rank + 1; // 顯示排名數字 1, 2, 3
+                    badge.style.borderColor = 'var(--accent-color)';
+                    badge.style.backgroundColor = 'var(--accent-color)';
+                    badge.style.color = '#0f172a';
+                } else {
+                    badge.innerText = '';
+                    badge.style.borderColor = '#475569';
+                    badge.style.backgroundColor = 'transparent';
+                }
+            });
+        }
+
+        // 中英切換邏輯
+        function toggleLanguage() {
+            currentLang = (currentLang === 'cn') ? 'en' : 'cn';
+            
+            document.querySelectorAll('[data-cn]').forEach(el => {
+                const translation = el.getAttribute(`data-${currentLang}`);
+                if (el.tagName !== 'INPUT') {
+                    el.innerText = translation;
+                }
+            });
+        }
+
+        // 提交問卷數據至 Google Apps Script 後台
+        function submitSurvey() {
+            // 【驗證 3】第四頁提交前：檢查是否至少排序勾選了一款飲品
+            if (selectedDrinkRank.length === 0) {
+                alert(currentLang === 'cn' ? '請至少點擊選擇一項你喜歡的飲品種類喔！🧋' : 'Please select at least one drink category! 🧋');
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = (currentLang === 'cn') ? '傳送中...' : 'Sending...';
+
+            // 收集數據
+            const username = document.getElementById('username').value || 'Anonymous';
+            const dietType = document.querySelector('input[name="dietType"]:checked').value;
+            
+            let foodArray = [];
+            if (dietType === 'meat') {
+                document.querySelectorAll('input[name="foodChoice"]:checked').forEach(cb => {
+                    foodArray.push(cb.value);
+                });
+            } else {
+                foodArray.push('純素食');
+            }
+
+            const sweetness = document.querySelector('input[name="sweetness"]:checked').value;
+
+            // 將排好序的飲品陣列轉換為可讀字串 (例如: "第1喜好:珍珠奶茶 > 第2喜好:純茶")
+            const rankStrings = selectedDrinkRank.map((drink, idx) => {
+                return `第${idx + 1}喜好:${drink}`;
+            });
+
+            const payload = {
+                name: username,
+                choices: [
+                    `飲食類型:${dietType === 'meat' ? '肉食' : '素食'}`,
+                    `食物:${foodArray.join('|')}`,
+                    `飲品排序:${rankStrings.join(' > ')}`,
+                    `甜度:${sweetness}`
+                ],
+                remark: `由 Staff Club 問卷網頁提交`
+            };
+
+            // 用 Fetch API POST 去 Google 後台
+            fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                goToPage(5); // 提交成功後，解鎖並前往最後的「大字置中感謝頁」
+            })
+            .catch(err => {
+                alert('Submission failed, please try again.');
+                console.error(err);
+                btn.disabled = false;
+                btn.innerText = (currentLang === 'cn') ? '提交投票' : 'Submit';
+            });
+        }
+
+        // 點擊完成按鈕：自動關閉網頁視窗
+        function closeWindow() {
+            window.close();
+            // 防護性提示：如果不是經連結打開而無法被瀏覽器代碼關閉，則彈出文字提示
+            setTimeout(() => {
+                alert(currentLang === 'cn' ? '問卷已完成！現在您可以安全地關閉此網頁視窗。' : 'Survey completed! You can now safely close this window.');
+            }, 200);
+        }
+    </script>
+</body>
+</html>
