@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* 2. Apple Dark Theme (預設) */
+        /* Apple Dark Theme (預設) */
         :root {
             --main-bg: #000000;
             --card-bg: rgba(28, 28, 30, 0.88);
@@ -22,7 +22,7 @@
             --btn-text: #000000;
         }
 
-        /* 3. Light Theme (淺色模式) */
+        /* Light Theme (淺色模式) */
         .light-theme {
             --main-bg: #f5f5f7;
             --card-bg: rgba(255, 255, 255, 0.85);
@@ -56,7 +56,7 @@
             overflow-x: hidden;
         }
 
-        /* 4. Progress Bar */
+        /* Progress Bar */
         .progress-wrapper {
             position: fixed;
             top: 0;
@@ -191,7 +191,7 @@
             cursor: pointer;
         }
 
-        /* 用於排序圓圈的樣式 */
+        /* 排序小圓圈樣式 */
         .rank-badge {
             width: 26px;
             height: 26px;
@@ -239,6 +239,7 @@
 
         .btn-back:hover { color: var(--text-primary); border-color: var(--text-muted); }
 
+        /* Corners Layout */
         .fixed-top-left { position: fixed; top: 24px; left: 32px; z-index: 10; }
         .fixed-footer-left { position: fixed; bottom: 24px; left: 32px; z-index: 10; }
 
@@ -292,7 +293,7 @@
     </div>
 
     <div class="fixed-top-left">
-        <button class="lang-toggle-btn" onclick="toggleTheme()">Light☀️/Dark🌙</button>
+        <button class="lang-toggle-btn" onclick="toggleTheme()">Light☀️ / Dark🌙</button>
     </div>
 
     <div class="fixed-footer-left">
@@ -324,7 +325,7 @@
         </div>
         <div class="card-body">
             <div style="width: 100%;">
-                <span class="section-subtitle" data-cn="請依喜好順序點擊飲食類型 (1或2優先排序)" data-en="Please click dietary types in order of preference (Ranking 1 or 2)">請依喜好順序點擊飲食類型 (1或2優先排序)</span>
+                <span class="section-subtitle" data-cn="請依喜好順序點擊飲食類型 (1和2必須全選排序)" data-en="Please click dietary types in order of preference (Ranking 1 & 2 required)">請依喜好順序點擊飲食類型 (1和2必須全選排序)</span>
                 <div class="choice-list" style="margin-top: 15px; gap: 20px;">
                     <div class="clickable-option diet-rank-option" data-diet="meat" onclick="handleDietRanking(this)">
                         <div class="rank-badge diet-badge"></div>
@@ -389,9 +390,9 @@
         <div class="card-body" style="gap: 30px;">
             <div style="width: 100%;">
                 <span class="section-subtitle" 
-                      data-cn="請依喜好順序點擊飲品種類 (多選排序)" 
-                      data-en="Please click drinks in order of preference (Ranking)">
-                      請依喜好順序點擊飲品種類 (多選排序)
+                      data-cn="請依喜好順序點擊飲品種類 (3個種類必須全部排序)" 
+                      data-en="Please click drinks in order of preference (All 3 categories required)">
+                      請依喜好順序點擊飲品種類 (3個種類必須全部排序)
                 </span>
                 <div class="choice-list" style="margin-top: 10px; gap: 10px;">
                     <div class="clickable-option drink-rank-option" data-drink="珍珠奶茶" onclick="handleDrinkRanking(this)">
@@ -400,7 +401,7 @@
                     </div>
                     <div class="clickable-option drink-rank-option" data-drink="水果茶" onclick="handleDrinkRanking(this)">
                         <div class="rank-badge drink-badge"></div>
-                        <span data-cn="水果茶" data-en="Fruit Tea">水果茶</span>&nbsp;🍓
+                        <span data-cn="水果茶" data-en="Fruit Tea">水果茶</span>&nbsp;🥥
                     </div>
                     <div class="clickable-option drink-rank-option" data-drink="純茶" onclick="handleDrinkRanking(this)">
                         <div class="rank-badge drink-badge"></div>
@@ -414,15 +415,15 @@
                 <div class="choice-list" style="margin-top: 10px; gap: 10px;">
                     <label class="clickable-option" style="padding: 12px 18px; font-size: 17px;">
                         <input type="radio" name="sweetness" value="正常糖" checked>
-                        <span data-cn="正常糖" data-en="Regular">正常糖</span>
+                        <span data-cn="正常糖 Regular" data-en="Regular">正常糖 Regular</span>
                     </label>
                     <label class="clickable-option" style="padding: 12px 18px; font-size: 17px;">
                         <input type="radio" name="sweetness" value="半糖">
-                        <span data-cn="半糖" data-en="Half Sugar">半糖</span>
+                        <span data-cn="半糖 Half Sugar" data-en="Half Sugar">半糖 Half Sugar</span>
                     </label>
                     <label class="clickable-option" style="padding: 12px 18px; font-size: 17px;">
                         <input type="radio" name="sweetness" value="三分糖">
-                        <span data-cn="三分糖" data-en="30% Sugar">三分糖</span>
+                        <span data-cn="三分糖 30% Sugar" data-en="30% Sugar">三分糖 30% Sugar</span>
                     </label>
                 </div>
             </div>
@@ -447,24 +448,26 @@
     </div>
 
     <script>
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzc1kVlx9uRXQVnmfwrkl65KC2OTE4YeeXl88bEvC4Kq-7xTobXTBfeFmZJRkvV6BgbsQ/exec'; 
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbx_eYmXG3eN8IAnH-U5bT1fPqorFm71_Z7j2T0v/exec'; 
         
         let currentLang = 'cn';
-        let selectedDietRank = [];   // 用來儲存飲食類型的排序 ['meat', 'veggie']
-        let selectedDrinkRank = [];  // 用來儲存飲品種類的排序
+        let selectedDietRank = [];   
+        let selectedDrinkRank = [];  
 
+        // 主題切換
         function toggleTheme(){
             document.body.classList.toggle('light-theme');
         }
 
+        // 進度條動態增長
         function updateProgress(page){
             const percent = (page / 5) * 100;
             document.getElementById('progressFill').style.width = percent + '%';
         }
 
-        // 核心翻頁與驗證機制
+        // 翻頁控制與極嚴格定填驗證
         function goToPage(pageNum) {
-            // 【驗證 1】第一頁 ➔ 第二頁：必須填寫名字
+            // 【強制定填 1】第一頁：必須輸入名字
             if (pageNum === 2) {
                 const usernameInput = document.getElementById('username').value.trim();
                 if (usernameInput === '') {
@@ -473,7 +476,7 @@
                 }
             }
 
-            // 【驗證 3】第三頁 ➔ 第四頁：如果第1優先是肉食類，必須至少勾選一種肉
+            // 【強制定填 3】第三頁：如果是肉食類為首選，必須至少勾選一個肉類細項
             if (pageNum === 4) {
                 if (selectedDietRank[0] === 'meat') {
                     const checkedMeats = document.querySelectorAll('input[name="foodChoice"]:checked');
@@ -489,7 +492,7 @@
             updateProgress(pageNum);
         }
 
-        // 第二頁飲食排序點擊邏輯
+        // 第二頁飲食排序多選點擊
         function handleDietRanking(element) {
             const dietValue = element.getAttribute('data-diet');
             const index = selectedDietRank.indexOf(dietValue);
@@ -504,7 +507,7 @@
                 element.style.backgroundColor = 'rgba(255, 255, 255, 0.01)';
             }
 
-            // 刷新第二頁的數字顯示
+            // 動態刷新第二頁的 Preference 數字
             document.querySelectorAll('.diet-rank-option').forEach(opt => {
                 const val = opt.getAttribute('data-diet');
                 const rank = selectedDietRank.indexOf(val);
@@ -523,15 +526,14 @@
             });
         }
 
-        // 第二頁「下一頁」路由智能分流
+        // 【強制定填 2】第二頁下一頁：必須全部選滿 2 個
         function handleDietRouting() {
-            // 【驗證 2】第二頁 ➔ 下一步：必須至少選擇一項飲食類型偏好
-            if (selectedDietRank.length === 0) {
-                alert(currentLang === 'cn' ? '請先依喜好順序點擊選擇你的飲食偏好喔！🍖🥗' : 'Please rank your dietary preferences first! 🍖🥗');
+            if (selectedDietRank.length < 2) {
+                alert(currentLang === 'cn' ? '請將所有飲食類型都排好優先順序喔！🍖🥗' : 'Please rank all dietary type preferences! 🍖🥗');
                 return;
             }
 
-            // 智能路由判斷：如果第1優先是肉食類 (meat)，前往第三頁。如果是素食類 (veggie)，直接跳往第四頁
+            // 智能分流路由：首選肉食去 Page 3，首選素食直接保送 Page 4
             if (selectedDietRank[0] === 'meat') {
                 goToPage(3);
             } else {
@@ -539,9 +541,7 @@
             }
         }
 
-        // 第四頁的「返回」路由智能判斷
         function handleDrinksBack() {
-            // 睇下第1優先係咪肉食類，係就退回第三頁，唔係就退回第二頁
             if (selectedDietRank[0] === 'meat') {
                 goToPage(3);
             } else {
@@ -549,7 +549,7 @@
             }
         }
 
-        // 第四頁飲品排序點擊邏輯
+        // 第四頁飲品排序多選點擊
         function handleDrinkRanking(element) {
             const drinkName = element.getAttribute('data-drink');
             const index = selectedDrinkRank.indexOf(drinkName);
@@ -564,6 +564,7 @@
                 element.style.backgroundColor = 'rgba(255, 255, 255, 0.01)';
             }
 
+            // 動態刷新第四頁的 1, 2, 3 排名
             document.querySelectorAll('.drink-rank-option').forEach(opt => {
                 const name = opt.getAttribute('data-drink');
                 const rank = selectedDrinkRank.indexOf(name);
@@ -582,6 +583,7 @@
             });
         }
 
+        // 完美解決中英切換 Bug（連 Input 的 Placeholder 一網打盡）
         function toggleLanguage() {
             currentLang = (currentLang === 'cn') ? 'en' : 'cn';
             
@@ -595,10 +597,10 @@
             });
         }
 
+        // 【強制定填 4】第四頁提交：必須將 3 個飲品全部排好順序
         function submitSurvey() {
-            // 【驗證 4】第四頁提交前：檢查是否至少選擇了一種飲品
-            if (selectedDrinkRank.length === 0) {
-                alert(currentLang === 'cn' ? '請至少點擊選擇一項你喜歡的飲品種類喔！🧋' : 'Please select at least one drink category! 🧋');
+            if (selectedDrinkRank.length < 3) {
+                alert(currentLang === 'cn' ? '請將所有飲品種類都排好喜好順序喔！🧋🥥🍵' : 'Please rank all 3 drink categories in order! 🧋🥥🍵');
                 return;
             }
 
@@ -608,11 +610,9 @@
 
             const username = document.getElementById('username').value || 'Anonymous';
             
-            // 格式化飲食類型的偏好排序
             const dietRankStrings = selectedDietRank.map((diet, idx) => `第${idx + 1}偏好:${diet === 'meat' ? '肉食' : '素食'}`);
 
             let foodArray = [];
-            // 只有當肉食被排在第1優先時，才去收集第3頁的肉類細項
             if (selectedDietRank[0] === 'meat') {
                 document.querySelectorAll('input[name="foodChoice"]:checked').forEach(cb => {
                     foodArray.push(cb.value);
