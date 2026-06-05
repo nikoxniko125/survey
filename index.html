@@ -73,7 +73,7 @@
 
         .progress-fill {
             height: 100%;
-            width: 16.66%; /* 預設第一頁為 1/6 */
+            width: 0%; /* 預設第一頁為 1/6 */
             background: var(--accent-color);
             transition: width 0.3s ease, background-color 0.3s;
         }
@@ -478,7 +478,7 @@
 
         // 進度條動態增長 (依據全新 6 頁結構計算)
         function updateProgress(page){
-            const percent = (page / 6) * 100;
+            const percent = ((page - 1) / 5) * 100;
             document.getElementById('progressFill').style.width = percent + '%';
         }
 
