@@ -366,17 +366,20 @@
                 </div>
             </div>
 
-            <div style="margin-top:25px; width:100%;">
-                <label class="section-subtitle" data-cn="🚫 不吃的食物" data-en="🚫 Excluded Foods">🚫 不吃的食物</label>
-                <input type="text" id="foodRestriction" class="input-field" data-cn="例如：香菜、羊肉、海鮮" data-en="e.g. Coriander, Mutton, Seafood" placeholder="例如：香菜、羊肉、海鮮">
-            </div>
+            <div style="display: flex; gap: 24px; width: 100%; margin-top: 25px; flex-wrap: wrap; margin-bottom: 20px;">
+                
+                <div style="flex: 1; min-width: 200px; max-width: 240px;">
+                    <label class="section-subtitle" data-cn="🚫 不吃的食物" data-en="🚫 Excluded Foods">🚫 不吃的食物</label>
+                    <input type="text" id="foodRestriction" class="input-field" data-cn="例如：香菜、羊肉、海鮮" data-en="e.g. Coriander, Mutton, Seafood" placeholder="例如：香菜、羊肉、海鮮">
+                </div>
 
-            <div style="margin-top:20px; width:100%;">
-                <label class="section-subtitle" data-cn="⚠️ 食物敏感" data-en="⚠️ Food Allergies">⚠️ 食物敏感</label>
-                <input type="text" id="foodAllergy" class="input-field" data-cn="例如：花生、蝦、牛奶" data-en="e.g. Peanuts, Shrimp, Milk" placeholder="例如：花生、蝦、牛奶">
+                <div style="flex: 1; min-width: 200px; max-width: 240px;">
+                    <label class="section-subtitle" data-cn="⚠️ 食物敏感" data-en="⚠️ Food Allergies">⚠️ 食物敏感</label>
+                    <input type="text" id="foodAllergy" class="input-field" data-cn="例如：花生、蝦、牛奶" data-en="e.g. Peanuts, Shrimp, Milk" placeholder="例如：花生、蝦、牛奶">
+                </div>
+
             </div>
-        </div>
-        <div class="btn-container">
+        </div> <div class="btn-container">
             <button class="nav-btn btn-back" onclick="goToPage(2)" data-cn="返回" data-en="Back">返回</button>
             <button class="nav-btn btn-next" onclick="handleFoodRouting()" data-cn="下一頁" data-en="Next">下一頁</button>
         </div>
